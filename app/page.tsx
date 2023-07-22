@@ -1,95 +1,149 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { useEffect } from "react";
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  OutlinedInput,
+  InputAdornment,
+  Stack,
+  Paper,
+  Typography,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import { ChatMessage } from "@/components";
+import { useTheme } from "@mui/material/styles";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { useFormik } from "formik";
+
+import {
+  useAppDispatch,
+  useAppSelector,
+  openaiChatSelector,
+  newOpenaiChat,
+  hydrateOpenaiChat,
+} from "@/store";
+import { chatCompletionThunk } from "@/store/actions/thunk";
 
 export default function Home() {
+  const theme = useTheme();
+
+  const dispatch = useAppDispatch();
+
+  // Redux
+  const chats = useAppSelector(openaiChatSelector);
+  useEffect(() => {
+    dispatch(hydrateOpenaiChat());
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      message: "",
+    },
+    onSubmit: async (values, { resetForm }) => {
+      resetForm();
+      await dispatch(newOpenaiChat(values.message));
+      await dispatch(chatCompletionThunk(values.message));
+    },
+  });
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Box sx={{ backgroundColor: theme.palette.background.default }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Stack justifyContent="space-between" sx={{ m: 2 }}>
+          <Box />
+          <Box>
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton>
+              <SettingsIcon />
+            </IconButton>
+          </Box>
+        </Stack>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Paper
+          elevation={0}
+          sx={{
+            flexGrow: 1,
+            height: "100vh",
+            borderRadius: "15px 0px 0px 15px",
+          }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+          <Stack height="100%" spacing={1} justifyContent="space-between">
+            <Box
+              style={{
+                overflow: "auto",
+              }}
+              sx={{
+                p: 2,
+              }}
+            >
+              {chats.data && (
+                <Stack spacing={1}>
+                  {chats.data.map((chat, i) => (
+                    <ChatMessage
+                      key={i}
+                      chatOwner={chat.role === "user" ? "self" : "other"}
+                      avatarUrl={
+                        chat.role === "user"
+                          ? "/icon-user.png"
+                          : "/icon-bot.png"
+                      }
+                      bubbleColor={
+                        chat.role === "user"
+                          ? theme.palette.primary.main
+                          : theme.palette.secondary.main
+                      }
+                    >
+                      <Typography sx={{ sx: 1 }}>{chat.content}</Typography>
+                    </ChatMessage>
+                  ))}
+                </Stack>
+              )}
+            </Box>
+            <Box>
+              <Stack alignItems="center" sx={{ p: 2 }}>
+                <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
+                  <OutlinedInput
+                    color="info"
+                    fullWidth
+                    id="message"
+                    name="message"
+                    value={formik.values.message}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    placeholder="Send a message"
+                    multiline
+                    maxRows={4}
+                    sx={{ borderRadius: 50 }}
+                    disabled={chats.loading}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="send-message"
+                          type="submit"
+                          disabled={chats.loading}
+                        >
+                          {chats.loading ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <SendIcon />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </form>
+              </Stack>
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
+    </Box>
+  );
 }
