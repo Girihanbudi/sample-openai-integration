@@ -7,7 +7,7 @@ export const openaiChatCompletion = async (
     method: "post",
     url: "/api/openai/chat-completion",
     data: { message: message },
-    timeout: 1000 * 60 * 1, // abort in 1 minute
+    timeout: 1000 * 60 * 10, // abort in 10 minute
   });
 };
 
