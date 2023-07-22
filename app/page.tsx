@@ -56,7 +56,7 @@ export default function Home() {
           justifyContent: "space-between",
         }}
       >
-        <Stack justifyContent="space-between" sx={{ m: 2 }}>
+        {/* <Stack justifyContent="space-between" sx={{ m: 2 }}>
           <Box />
           <Box>
             <Box sx={{ flexGrow: 1 }} />
@@ -64,14 +64,14 @@ export default function Home() {
               <SettingsIcon />
             </IconButton>
           </Box>
-        </Stack>
+        </Stack> */}
 
         <Paper
           elevation={0}
           sx={{
             flexGrow: 1,
             height: "100vh",
-            borderRadius: "15px 0px 0px 15px",
+            // borderRadius: "15px 0px 0px 15px",
           }}
         >
           <Stack height="100%" spacing={1} justifyContent="space-between">
