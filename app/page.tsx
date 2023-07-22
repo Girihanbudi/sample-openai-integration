@@ -71,7 +71,7 @@ export default function Home() {
           sx={{
             flexGrow: 1,
             height: "100vh",
-            borderRadius: "15px 0px 0px 15px",
+            // borderRadius: "15px 0px 0px 15px",
           }}
         >
           <Stack height="100%" spacing={1} justifyContent="space-between">
