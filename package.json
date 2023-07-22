@@ -9,14 +9,30 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.14.1",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@tanstack/react-query": "^4.29.25",
+    "@trpc/client": "^10.35.0",
+    "@trpc/next": "^10.35.0",
+    "@trpc/react-query": "^10.35.0",
+    "@trpc/server": "^10.35.0",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
+    "formik": "^2.4.2",
     "next": "13.4.10",
+    "next-redux-wrapper": "^8.1.0",
+    "openai": "^3.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.1.6"
+    "react-redux": "^8.1.1",
+    "typescript": "5.1.6",
+    "validate": "^5.2.0",
+    "zod": "^3.21.4"
   }
 }
